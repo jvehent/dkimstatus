@@ -4,7 +4,7 @@
  * This plugin displays an icon showing the status 
  * of dkim verification of the message 
  *
- * @version 0.4.3
+ * @version 0.4.4
  * @author Julien vehent 
  * @mail julien@linuxwall.info
  * 
@@ -12,7 +12,8 @@
  * http://www.wladik.net
  *
  * Changelog:
- *      20100811 - from Sergio Cambra: SPF fix, image function and spanish translation
+ *  20101118 - japanese translation from Taka
+ *  20100811 - from Sergio Cambra: SPF fix, image function and spanish translation
  *	20100202 - fix for amavis and add cz translation
  *	20100201 - add control of header.i and header.from to detect third party signature, change icons
  *	20100115 - add 'no information' status with image using x-dkim-authentication-results
