@@ -1,8 +1,8 @@
 <?php
 
 $labels = array();
-$labels['verifiedsender'] = 'Gueltige Unterschrift von Domane des Autor. bestaetigt von ';
-$labels['invalidsignature'] = 'Die Unterschrift ist nicht gueltig ! bestaetigt von ';
-$labels['nosignature'] = 'Keine Auskunft ueber die Unterschrift';
-$labels['thirdpartysig'] = 'Keine Unterschrift von Domanen des Autor, gibt es aber eine Drittseiteunterschrift.bestaetigt von ';
+$labels['verifiedsender'] = 'Die Absenderdomain besitzt eine g&uuml;ltige Unterschrift! &Uuml;berpr&uuml;ft von ';
+$labels['invalidsignature'] = 'Die Unterschrift ist nicht g&uuml;ltig! &Uuml;berpr&uuml;ft von ';
+$labels['nosignature'] = 'Keine Informationen &uuml;ber die Unterschrift vorhanden.';
+$labels['thirdpartysig'] = 'Die Absenderdomain besitzt keine Unterschrift. Es gibt jedoch eine Unterschrift die bestätigt wurde durch ';
 ?>
