@@ -4,7 +4,7 @@
  * This plugin displays an icon showing the status 
  * of dkim verification of the message 
  *
- * @version 0.4.5
+ * @version 0.4.7
  * @author Julien vehent 
  * @mail julien@linuxwall.info
  * 
@@ -12,6 +12,8 @@
  * http://www.wladik.net
  *
  * Changelog:
+ *  20110619 - Added License information for GPLv2
+ *  20110406 - added italian translation from Roberto Puzzanghera
  *  20110128 - updated german translation by Simon
  *  20101118 - japanese translation from Taka
  *  20100811 - from Sergio Cambra: SPF fix, image function and spanish translation
