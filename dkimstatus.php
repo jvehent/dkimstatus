@@ -18,138 +18,138 @@
  *  20110128 - updated german translation by Simon
  *  20101118 - japanese translation from Taka
  *  20100811 - from Sergio Cambra: SPF fix, image function and spanish translation
- *	20100202 - fix for amavis and add cz translation
- *	20100201 - add control of header.i and header.from to detect third party signature, change icons
- *	20100115 - add 'no information' status with image using x-dkim-authentication-results
- *	20090920 - fixed space in matching status (thanks Pim Pronk for suggestion)
+ *  20100202 - fix for amavis and add cz translation
+ *  20100201 - add control of header.i and header.from to detect third party signature, change icons
+ *  20100115 - add 'no information' status with image using x-dkim-authentication-results
+ *  20090920 - fixed space in matching status (thanks Pim Pronk for suggestion)
  */
 class dkimstatus extends rcube_plugin
 {
-	public $task = 'mail';
-	function init()
-	{
-		$rcmail = rcmail::get_instance();
-		if ($rcmail->action == 'show' || $rcmail->action == 'preview') {
-			$this->add_hook('imap_init', array($this, 'imap_init'));
-			$this->add_hook('message_headers_output', array($this, 'message_headers'));
-		} else if ($rcmail->action == '') {
-			// with enabled_caching we're fetching additional headers before show/preview
-			$this->add_hook('imap_init', array($this, 'imap_init'));
-		}
-	}
-	
-	function imap_init($p)
-	{
-		$rcmail = rcmail::get_instance();
-		$p['fetch_headers'] = trim($p['fetch_headers'].' ' . strtoupper('Authentication-Results').' '. strtoupper('X-DKIM-Authentication-Results').' ' .strtoupper('X-Spam-Status'));
-		return $p;
-	}
+    public $task = 'mail';
+    function init()
+    {
+        $rcmail = rcmail::get_instance();
+        if ($rcmail->action == 'show' || $rcmail->action == 'preview') {
+            $this->add_hook('imap_init', array($this, 'imap_init'));
+            $this->add_hook('message_headers_output', array($this, 'message_headers'));
+        } else if ($rcmail->action == '') {
+            // with enabled_caching we're fetching additional headers before show/preview
+            $this->add_hook('imap_init', array($this, 'imap_init'));
+        }
+    }
+    
+    function imap_init($p)
+    {
+        $rcmail = rcmail::get_instance();
+        $p['fetch_headers'] = trim($p['fetch_headers'].' ' . strtoupper('Authentication-Results').' '. strtoupper('X-DKIM-Authentication-Results').' ' .strtoupper('X-Spam-Status'));
+        return $p;
+    }
 
-	function image($image, $alt, $title)
-	{
-		return '<img src="plugins/dkimstatus/images/'.$image.'" alt="'.$this->gettext($alt).'" title="'.$this->gettext($alt).$title.'" /> ';
-	}
-	
-	function message_headers($p)
-	{
-		$this->add_texts('localization');
+    function image($image, $alt, $title)
+    {
+        return '<img src="plugins/dkimstatus/images/'.$image.'" alt="'.$this->gettext($alt).'" title="'.$this->gettext($alt).$title.'" /> ';
+    }
+    
+    function message_headers($p)
+    {
+        $this->add_texts('localization');
 
-		/* First, if dkimproxy did not find a signature, stop here
-		*/
-		if($p['headers']->others['x-dkim-authentication-results'] || $p['headers']->others['authentication-results'] || $p['headers']->others['x-spam-status']){
+        /* First, if dkimproxy did not find a signature, stop here
+        */
+        if($p['headers']->others['x-dkim-authentication-results'] || $p['headers']->others['authentication-results'] || $p['headers']->others['x-spam-status']){
 
-			$results = $p['headers']->others['x-dkim-authentication-results'];
+            $results = $p['headers']->others['x-dkim-authentication-results'];
 
-			if(preg_match("/none/", $results)) {
-				$image = 'nosiginfo.png';
-				$alt = 'nosignature';
-			} else {
-				/* Second, check the authentication-results header
-				*/
-				if($p['headers']->others['authentication-results']) {
+            if(preg_match("/none/", $results)) {
+                $image = 'nosiginfo.png';
+                $alt = 'nosignature';
+            } else {
+                /* Second, check the authentication-results header
+                */
+                if($p['headers']->others['authentication-results']) {
 
-					$results = $p['headers']->others['authentication-results'];
+                    $results = $p['headers']->others['authentication-results'];
 
-					if(preg_match("/dkim=([a-zA-Z0-9]*)/", $results, $m)) {
-						$status = ($m[1]);
-					}
+                    if(preg_match("/dkim=([a-zA-Z0-9]*)/", $results, $m)) {
+                        $status = ($m[1]);
+                    }
 
-					if(preg_match("/domainkeys=([a-zA-Z0-9]*)/", $results, $m)) {
-						$status = ($m[1]);
-					}
+                    if(preg_match("/domainkeys=([a-zA-Z0-9]*)/", $results, $m)) {
+                        $status = ($m[1]);
+                    }
 
 
-					if($status == 'pass') {
+                    if($status == 'pass') {
 
-						/* Verify if its an author's domain signature or a third party
-						*/
+                        /* Verify if its an author's domain signature or a third party
+                        */
 
-						if(preg_match("/[@][a-zA-Z0-9]+([.][a-zA-Z0-9]+)?\.[a-zA-Z]{2,4}/", $p['headers']->from, $m)) {
-							$authordomain = $m[0];
-							if(preg_match("/header\.i=(([a-zA-Z0-9]+[_\.\-]?)+)?($authordomain)/", $results) ||
-								preg_match("/header\.from=(([a-zA-Z0-9]+[_\.\-]?)+)?($authordomain)/", $results)) {
-								$image = 'authorsign.png';
-								$alt = 'verifiedsender';
-								$title = $results;
-							} else {
-								$image = 'thirdpty.png';
-								$alt = 'thirdpartysig';
-								$title = $results;
-							}
-						}
+                        if(preg_match("/[@][a-zA-Z0-9]+([.][a-zA-Z0-9]+)?\.[a-zA-Z]{2,4}/", $p['headers']->from, $m)) {
+                            $authordomain = $m[0];
+                            if(preg_match("/header\.i=(([a-zA-Z0-9]+[_\.\-]?)+)?($authordomain)/", $results) ||
+                                preg_match("/header\.from=(([a-zA-Z0-9]+[_\.\-]?)+)?($authordomain)/", $results)) {
+                                $image = 'authorsign.png';
+                                $alt = 'verifiedsender';
+                                $title = $results;
+                            } else {
+                                $image = 'thirdpty.png';
+                                $alt = 'thirdpartysig';
+                                $title = $results;
+                            }
+                        }
 
-					}
-					/* If signature proves invalid, show appropriate warning
-					*/ 
-					else if ($status) {
-						$image = 'invalidsig.png';
-						$alt = 'invalidsignature';
-						$title = $results;
-					}
-					/* If no status it can be a spf verification
-					*/
-					else {
-						$image = 'nosiginfo.png';
-						$alt = 'nosignature';
-					}
+                    }
+                    /* If signature proves invalid, show appropriate warning
+                    */ 
+                    else if ($status) {
+                        $image = 'invalidsig.png';
+                        $alt = 'invalidsignature';
+                        $title = $results;
+                    }
+                    /* If no status it can be a spf verification
+                    */
+                    else {
+                        $image = 'nosiginfo.png';
+                        $alt = 'nosignature';
+                    }
 
                 /* Third, check for spamassassin's X-Spam-Status
                 */
-				} else if ($p['headers']->others['x-spam-status']) {
+                } else if ($p['headers']->others['x-spam-status']) {
                     
-    				$image = 'nosiginfo.png';
-    				$alt = 'nosignature';
+                    $image = 'nosiginfo.png';
+                    $alt = 'nosignature';
 
-    				/* DKIM_* are defined at: http://search.cpan.org/~kmcgrail/Mail-SpamAssassin-3.3.2/lib/Mail/SpamAssassin/Plugin/DKIM.pm */
-					$results = $p['headers']->others['x-spam-status'];
+                    /* DKIM_* are defined at: http://search.cpan.org/~kmcgrail/Mail-SpamAssassin-3.3.2/lib/Mail/SpamAssassin/Plugin/DKIM.pm */
+                    $results = $p['headers']->others['x-spam-status'];
                     if(preg_match_all('/DKIM_[^,]+/', $results, $m)) {
                         if(array_search('DKIM_SIGNED', $m[0]) !== FALSE) {
                             if(array_search('DKIM_VALID', $m[0]) !== FALSE) {
                                 if(array_search('DKIM_VALID_AU', $m[0])) {
-									$image = 'authorsign.png';
-									$alt = 'verifiedsender';
-									$title = 'DKIM_SIGNED, DKIM_VALID, DKIM_VALID_AU';
-								} else {
-									$image = 'thirdpty.png';
-									$alt = 'thirdpartysig';
-									$title = 'DKIM_SIGNED, DKIM_VALID';
-								}
-							} else {
-								$image = 'invalidsig.png';
-								$alt = 'invalidsignature';
-								$title = 'DKIM_SIGNED';
-							}
-						}
+                                    $image = 'authorsign.png';
+                                    $alt = 'verifiedsender';
+                                    $title = 'DKIM_SIGNED, DKIM_VALID, DKIM_VALID_AU';
+                                } else {
+                                    $image = 'thirdpty.png';
+                                    $alt = 'thirdpartysig';
+                                    $title = 'DKIM_SIGNED, DKIM_VALID';
+                                }
+                            } else {
+                                $image = 'invalidsig.png';
+                                $alt = 'invalidsignature';
+                                $title = 'DKIM_SIGNED';
+                            }
+                        }
                     }
                 }
-			}
-		} else {
-			$image = 'nosiginfo.png';
-			$alt = 'nosignature';
-		}
-		if ($image && $alt) {
-			$p['output']['from']['value'] = $this->image($image, $alt, $title) . $p['output']['from']['value'];
-		}
-		return $p;
-	}
+            }
+        } else {
+            $image = 'nosiginfo.png';
+            $alt = 'nosignature';
+        }
+        if ($image && $alt) {
+            $p['output']['from']['value'] = $this->image($image, $alt, $title) . $p['output']['from']['value'];
+        }
+        return $p;
+    }
 } 
