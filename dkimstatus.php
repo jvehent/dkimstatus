@@ -12,6 +12,7 @@
  * http://www.wladik.net
  *
  * Changelog:
+ *  20110912 - Added X-Spam-Status for spamassassin (thanks Ashish Shukla for the patch)
  *  20110619 - Added License information for GPLv2
  *  20110406 - added italian translation from Roberto Puzzanghera
  *  20110128 - updated german translation by Simon
@@ -40,7 +41,7 @@ class dkimstatus extends rcube_plugin
 	function imap_init($p)
 	{
 		$rcmail = rcmail::get_instance();
-		$p['fetch_headers'] = trim($p['fetch_headers'].' ' . strtoupper('Authentication-Results').' '. strtoupper('X-DKIM-Authentication-Results'));
+		$p['fetch_headers'] = trim($p['fetch_headers'].' ' . strtoupper('Authentication-Results').' '. strtoupper('X-DKIM-Authentication-Results').' ' .strtoupper('X-Spam-Status'));
 		return $p;
 	}
 
@@ -55,7 +56,7 @@ class dkimstatus extends rcube_plugin
 
 		/* First, if dkimproxy did not find a signature, stop here
 		*/
-		if($p['headers']->others['x-dkim-authentication-results'] || $p['headers']->others['authentication-results']){
+		if($p['headers']->others['x-dkim-authentication-results'] || $p['headers']->others['authentication-results'] || $p['headers']->others['x-spam-status']){
 
 			$results = $p['headers']->others['x-dkim-authentication-results'];
 
@@ -111,7 +112,36 @@ class dkimstatus extends rcube_plugin
 						$image = 'nosiginfo.png';
 						$alt = 'nosignature';
 					}
-				}
+
+                /* Third, check for spamassassin's X-Spam-Status
+                */
+				} else if ($p['headers']->others['x-spam-status']) {
+                    
+    				$image = 'nosiginfo.png';
+    				$alt = 'nosignature';
+
+    				/* DKIM_* are defined at: http://search.cpan.org/~kmcgrail/Mail-SpamAssassin-3.3.2/lib/Mail/SpamAssassin/Plugin/DKIM.pm */
+					$results = $p['headers']->others['x-spam-status'];
+                    if(preg_match_all('/DKIM_[^,]+/', $results, $m)) {
+                        if(array_search('DKIM_SIGNED', $m[0]) !== FALSE) {
+                            if(array_search('DKIM_VALID', $m[0]) !== FALSE) {
+                                if(array_search('DKIM_VALID_AU', $m[0])) {
+									$image = 'authorsign.png';
+									$alt = 'verifiedsender';
+									$title = 'DKIM_SIGNED, DKIM_VALID, DKIM_VALID_AU';
+								} else {
+									$image = 'thirdpty.png';
+									$alt = 'thirdpartysig';
+									$title = 'DKIM_SIGNED, DKIM_VALID';
+								}
+							} else {
+								$image = 'invalidsig.png';
+								$alt = 'invalidsignature';
+								$title = 'DKIM_SIGNED';
+							}
+						}
+                    }
+                }
 			}
 		} else {
 			$image = 'nosiginfo.png';
