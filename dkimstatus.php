@@ -1,17 +1,18 @@
 <?php
 
 /**
- * This plugin displays an icon showing the status 
- * of dkim verification of the message 
+ * This plugin displays an icon showing the status
+ * of dkim verification of the message
  *
- * @version 0.4.7
- * @author Julien vehent 
+ * @version 0.8.1
+ * @author Julien vehent
  * @mail julien@linuxwall.info
- * 
+ *
  * original plugin from Vladimir Mach - wladik@gmail.com
  * http://www.wladik.net
  *
  * Changelog:
+ *  20120825 - Rename imap_init hook into storage_init (Daniel Hahler)
  *  20110912 - Added X-Spam-Status for spamassassin (thanks Ashish Shukla for the patch)
  *  20110619 - Added License information for GPLv2
  *  20110406 - added italian translation from Roberto Puzzanghera
@@ -37,7 +38,7 @@ class dkimstatus extends rcube_plugin
             $this->add_hook('storage_init', array($this, 'storage_init'));
         }
     }
-    
+
     function storage_init($p)
     {
         $rcmail = rcmail::get_instance();
@@ -49,7 +50,7 @@ class dkimstatus extends rcube_plugin
     {
         return '<img src="plugins/dkimstatus/images/'.$image.'" alt="'.$this->gettext($alt).'" title="'.$this->gettext($alt).$title.'" /> ';
     }
-    
+
     function message_headers($p)
     {
         $this->add_texts('localization');
@@ -100,7 +101,7 @@ class dkimstatus extends rcube_plugin
 
                     }
                     /* If signature proves invalid, show appropriate warning
-                    */ 
+                    */
                     else if ($status) {
                         $image = 'invalidsig.png';
                         $alt = 'invalidsignature';
@@ -116,7 +117,7 @@ class dkimstatus extends rcube_plugin
                 /* Third, check for spamassassin's X-Spam-Status
                 */
                 } else if ($p['headers']->others['x-spam-status']) {
-                    
+
                     $image = 'nosiginfo.png';
                     $alt = 'nosignature';
 
@@ -152,4 +153,4 @@ class dkimstatus extends rcube_plugin
         }
         return $p;
     }
-} 
+}
