@@ -87,8 +87,7 @@ class dkimstatus extends rcube_plugin
 
                         if(preg_match("/[@][a-zA-Z0-9]+([.][a-zA-Z0-9]+)?\.[a-zA-Z]{2,4}/", $p['headers']->from, $m)) {
                             $authordomain = $m[0];
-                            if(preg_match("/header\.i=(([a-zA-Z0-9]+[_\.\-]?)+)?($authordomain)/", $results) ||
-                                preg_match("/header\.from=(([a-zA-Z0-9]+[_\.\-]?)+)?($authordomain)/", $results)) {
+                            if(preg_match("/header\.(d|i|from)=(([a-zA-Z0-9]+[_\.\-]?)+)?($authordomain)/", $results)) {
                                 $image = 'authorsign.png';
                                 $alt = 'verifiedsender';
                                 $title = $results;
