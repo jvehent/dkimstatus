@@ -4,7 +4,7 @@
  * This plugin displays an icon showing the status
  * of dkim verification of the message
  *
- * @version 0.8.1
+ * @version 0.8.2
  * @author Julien vehent
  * @mail julien@linuxwall.info
  *
@@ -12,6 +12,9 @@
  * http://www.wladik.net
  *
  * Changelog:
+ *  20120915 - Portuguese – Brazil translation by Brivaldo Jr
+ *             Russian translation, by Подшивалов Антон
+ *             Fix header match to include `d` and process only one regex
  *  20120825 - Rename imap_init hook into storage_init (Daniel Hahler)
  *  20110912 - Added X-Spam-Status for spamassassin (thanks Ashish Shukla for the patch)
  *  20110619 - Added License information for GPLv2
