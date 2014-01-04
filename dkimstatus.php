@@ -4,7 +4,7 @@
  * This plugin displays an icon showing the status
  * of dkim verification of the message
  *
- * @version 0.8.2
+ * @version 0.8.3
  * @author Julien vehent
  * @mail julien@linuxwall.info
  *
@@ -12,6 +12,7 @@
  * http://www.wladik.net
  *
  * Changelog:
+ *  20140105 - from Savinov Artem: Add small fix if dkim and domainkey signature exists
  *  20120915 - Portuguese – Brazil translation by Brivaldo Jr
  *             Russian translation, by Подшивалов Антон
  *             Fix header match to include `d` and process only one regex
@@ -74,14 +75,31 @@ class dkimstatus extends rcube_plugin
 
                     $results = $p['headers']->others['authentication-results'];
 
-                    if(preg_match("/dkim=([a-zA-Z0-9]*)/", $results, $m)) {
-                        $status = ($m[1]);
-                    }
+                if (is_array($results)) {
+                        foreach ($results as $result) {
+                                if(preg_match("/dkim=([a-zA-Z0-9]*)/", $result, $m)) {
+                                        $status = ($m[1]);
+                                        $res=$result;
+                                        break;
+                                }
 
-                    if(preg_match("/domainkeys=([a-zA-Z0-9]*)/", $results, $m)) {
-                        $status = ($m[1]);
-                    }
+                                if(preg_match("/domainkeys=([a-zA-Z0-9]*)/", $result, $m)) {
+                                        $status = ($m[1]);
+                                        $res=$result;
+                                }
+                        }
+                        $results=$res;
+                } else {
 
+                        if(preg_match("/dkim=([a-zA-Z0-9]*)/", $results, $m)) {
+                            $status = ($m[1]);
+                        }
+
+                        if(preg_match("/domainkeys=([a-zA-Z0-9]*)/", $results, $m)) {
+                            $status = ($m[1]);
+                        }
+
+                }
 
                     if($status == 'pass') {
 
