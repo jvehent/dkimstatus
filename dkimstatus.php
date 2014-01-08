@@ -51,7 +51,7 @@ class dkimstatus extends rcube_plugin
 
     function image($image, $alt, $title)
     {
-        return '<img src="plugins/dkimstatus/images/'.$image.'" alt="'.$this->gettext($alt).'" title="'.$this->gettext($alt).$title.'" /> ';
+        return '<img src="plugins/dkimstatus/images/'.$image.'" alt="'.$this->gettext($alt).'" title="'.$this->gettext($alt).htmlentities($title).'" /> ';
     }
 
     function message_headers($p)
