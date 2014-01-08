@@ -75,31 +75,27 @@ class dkimstatus extends rcube_plugin
 
                     $results = $p['headers']->others['authentication-results'];
 
-                if (is_array($results)) {
-                        foreach ($results as $result) {
-                                if(preg_match("/dkim=([a-zA-Z0-9]*)/", $result, $m)) {
-                                        $status = ($m[1]);
-                                        $res=$result;
-                                        break;
-                                }
-
-                                if(preg_match("/domainkeys=([a-zA-Z0-9]*)/", $result, $m)) {
-                                        $status = ($m[1]);
-                                        $res=$result;
-                                }
-                        }
-                        $results=$res;
-                } else {
-
-                        if(preg_match("/dkim=([a-zA-Z0-9]*)/", $results, $m)) {
-                            $status = ($m[1]);
-                        }
-
-                        if(preg_match("/domainkeys=([a-zA-Z0-9]*)/", $results, $m)) {
-                            $status = ($m[1]);
-                        }
-
-                }
+					if (is_array($results)) {
+						foreach ($results as $result) {
+							if(preg_match("/dkim=([a-zA-Z0-9]*)/", $result, $m)) {
+								$status = ($m[1]);
+								$res=$result;
+								break;
+							}
+							if(preg_match("/domainkeys=([a-zA-Z0-9]*)/", $result, $m)) {
+								$status = ($m[1]);
+								$res=$result;
+							}
+						}
+						$results=$res;
+					} else {
+						if(preg_match("/dkim=([a-zA-Z0-9]*)/", $results, $m)) {
+						    $status = ($m[1]);
+						}
+						if(preg_match("/domainkeys=([a-zA-Z0-9]*)/", $results, $m)) {
+						    $status = ($m[1]);
+						}
+					}
 
                     if($status == 'pass') {
 
