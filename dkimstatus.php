@@ -12,6 +12,7 @@
  * http://www.wladik.net
  *
  * Changelog:
+ *  20140219 - Dutch translation by Filip Vervloesem
  *  20140105 - from Savinov Artem: Add small fix if dkim and domainkey signature exists
  *  20120915 - Portuguese – Brazil translation by Brivaldo Jr
  *             Russian translation, by Подшивалов Антон
