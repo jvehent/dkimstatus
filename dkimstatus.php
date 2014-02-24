@@ -47,7 +47,7 @@ class dkimstatus extends rcube_plugin
     function storage_init($p)
     {
         $rcmail = rcmail::get_instance();
-        $p['fetch_headers'] = trim($p['fetch_headers'].' ' . strtoupper('Authentication-Results').' '. strtoupper('X-DKIM-Authentication-Results').' ' .strtoupper('X-Spam-Status'));
+        $p['fetch_headers'] = trim($p['fetch_headers'].' ' . strtoupper('Authentication-Results').' '. strtoupper('X-DKIM-Authentication-Results').' ' .strtoupper('X-Spam-Status').' ' .strtoupper('X-Spam-Checker-Version'));
         return $p;
     }
 
@@ -142,20 +142,20 @@ class dkimstatus extends rcube_plugin
                     $results = $p['headers']->others['x-spam-status'];
                     if(preg_match_all('/DKIM_[^,]+/', $results, $m)) {
                         if(array_search('DKIM_SIGNED', $m[0]) !== FALSE) {
+                            $title = $p['headers']->others['x-spam-checker-version'];
+                            if(!$title)
+                                $title = "unknown SpamChecker";
                             if(array_search('DKIM_VALID', $m[0]) !== FALSE) {
                                 if(array_search('DKIM_VALID_AU', $m[0])) {
                                     $image = 'authorsign.png';
                                     $alt = 'verifiedsender';
-                                    $title = 'DKIM_SIGNED, DKIM_VALID, DKIM_VALID_AU';
                                 } else {
                                     $image = 'thirdpty.png';
                                     $alt = 'thirdpartysig';
-                                    $title = 'DKIM_SIGNED, DKIM_VALID';
                                 }
                             } else {
                                 $image = 'invalidsig.png';
                                 $alt = 'invalidsignature';
-                                $title = 'DKIM_SIGNED';
                             }
                         }
                     }
