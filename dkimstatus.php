@@ -103,7 +103,7 @@ class dkimstatus extends rcube_plugin
                         /* Verify if its an author's domain signature or a third party
                         */
 
-                        if(preg_match("/[@]([a-zA-Z0-9]+([.][a-zA-Z0-9]+)?\.[a-zA-Z]{2,4})/", $p['headers']->from, $m)) {
+                        if(preg_match("/[@]([a-zA-Z0-9_-]+([.][a-zA-Z0-9_-]+)?\.[a-zA-Z]{2,4})/", $p['headers']->from, $m)) {
                             $authordomain = $m[1];
                             if(preg_match("/header\.(d|i|from)=(([a-zA-Z0-9]+[_\.\-]?)+)?($authordomain)/", $results)) {
                                 $image = 'authorsign.png';
