@@ -34,19 +34,12 @@ class dkimstatus extends rcube_plugin
     public $task = 'mail';
     function init()
     {
-        $rcmail = rcmail::get_instance();
-        if ($rcmail->action == 'show' || $rcmail->action == 'preview') {
-            $this->add_hook('storage_init', array($this, 'storage_init'));
-            $this->add_hook('message_headers_output', array($this, 'message_headers'));
-        } else if ($rcmail->action == '') {
-            // with enabled_caching we're fetching additional headers before show/preview
-            $this->add_hook('storage_init', array($this, 'storage_init'));
-        }
+        $this->add_hook('storage_init', array($this, 'storage_init'));
+        $this->add_hook('message_headers_output', array($this, 'message_headers'));
     }
 
     function storage_init($p)
     {
-        $rcmail = rcmail::get_instance();
         $p['fetch_headers'] = trim($p['fetch_headers'].' ' . strtoupper('Authentication-Results').' '. strtoupper('X-DKIM-Authentication-Results').' ' .strtoupper('X-Spam-Status').' ' .strtoupper('X-Spam-Checker-Version'));
         return $p;
     }
